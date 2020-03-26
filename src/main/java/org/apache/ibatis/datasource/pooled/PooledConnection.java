@@ -24,6 +24,8 @@ import java.sql.SQLException;
 import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
+ * learn
+ * 使用动态代理封装了真正的数据库连接对象
  * @author Clinton Begin
  */
 class PooledConnection implements InvocationHandler {
@@ -32,13 +34,37 @@ class PooledConnection implements InvocationHandler {
   private static final Class<?>[] IFACES = new Class<?>[] { Connection.class };
 
   private final int hashCode;
+  /**
+   * 记录了当前连接所在的数据源对象，本次连接是这个数据源创建的，关闭后也回到这个数据源
+   */
   private final PooledDataSource dataSource;
+  /**
+   * 真正的连接对象
+   */
   private final Connection realConnection;
+  /**
+   * 代理连接对象
+   */
   private final Connection proxyConnection;
+  /**
+   * 从数据源取出的时间戳
+   */
   private long checkoutTimestamp;
+  /**
+   * 连接创建时的时间戳
+   */
   private long createdTimestamp;
+  /**
+   * 连接最后一次使用的时间戳
+   */
   private long lastUsedTimestamp;
+  /**
+   * 根据数据库url、用户名、密码生成一个hash值，唯一标识一个连接池
+   */
   private int connectionTypeCode;
+  /**
+   * 连接是否有效
+   */
   private boolean valid;
 
   /**
@@ -223,7 +249,7 @@ class PooledConnection implements InvocationHandler {
 
   /**
    * Required for InvocationHandler implementation.
-   *
+   * 用来增强数据connect对象，使用前检查连接是否有效，关闭时对连接进行回收
    * @param proxy  - not used
    * @param method - the method to be executed
    * @param args   - the parameters to be passed to the method
@@ -232,11 +258,13 @@ class PooledConnection implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     String methodName = method.getName();
+    // 如果调用close，不是真正的关闭，而是回收到连接池
     if (CLOSE.hashCode() == methodName.hashCode() && CLOSE.equals(methodName)) {
       dataSource.pushConnection(this);
       return null;
     }
     try {
+      // 使用前要检查连接是否有效
       if (!Object.class.equals(method.getDeclaringClass())) {
         // issue #579 toString() should never fail
         // throw an SQLException instead of a Runtime

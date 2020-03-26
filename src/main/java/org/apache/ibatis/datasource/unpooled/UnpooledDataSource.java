@@ -32,13 +32,23 @@ import javax.sql.DataSource;
 import org.apache.ibatis.io.Resources;
 
 /**
+ * learn
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
 public class UnpooledDataSource implements DataSource {
 
+  /**
+   * 驱动类的类加载器
+   */
   private ClassLoader driverClassLoader;
+  /**
+   * 数据库连接相关配置信息
+   */
   private Properties driverProperties;
+  /**
+   * 缓存已注册的数据库驱动类
+   */
   private static Map<String, Driver> registeredDrivers = new ConcurrentHashMap<>();
 
   private String driver;
@@ -46,9 +56,16 @@ public class UnpooledDataSource implements DataSource {
   private String username;
   private String password;
 
+  /**
+   * 是否自动提交
+   */
   private Boolean autoCommit;
+  /**
+   * 事务隔离级别
+   */
   private Integer defaultTransactionIsolationLevel;
 
+  // 为什么Class.forName("com.mysql.jdbc.Driver")后，驱动就被注册到DriverManager
   static {
     Enumeration<Driver> drivers = DriverManager.getDrivers();
     while (drivers.hasMoreElements()) {
@@ -199,6 +216,7 @@ public class UnpooledDataSource implements DataSource {
   private Connection doGetConnection(Properties properties) throws SQLException {
     initializeDriver();
     Connection connection = DriverManager.getConnection(url, properties);
+    // 设置事务是否自动提交，事务的隔离级别
     configureConnection(connection);
     return connection;
   }
