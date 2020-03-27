@@ -1,5 +1,5 @@
 /**
- *    Copyright ${license.git.copyrightYears} the original author or authors.
+ *    Copyright 2009-2020 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -41,28 +41,43 @@ import org.apache.ibatis.reflection.property.PropertyNamer;
 /**
  * This class represents a cached set of class definition information that
  * allows for easy mapping between property names and getter/setter methods.
- *
+ * learn
+ * 反射器, 属性->getter/setter的映射器，而且加了缓存
+ * 可参考ReflectorTest来理解这个类的用处
  * @author Clinton Begin
  */
 public class Reflector {
 
+  // 对应的class
   private final Class<?> type;
+  // getter的属性列表
   private final String[] readablePropertyNames;
+  // setter的属性列表
   private final String[] writeablePropertyNames;
+  // setter的方法列表
   private final Map<String, Invoker> setMethods = new HashMap<>();
+  // getter的方法列表
   private final Map<String, Invoker> getMethods = new HashMap<>();
+  // setter的类型列表
   private final Map<String, Class<?>> setTypes = new HashMap<>();
+  // getter的类型列表
   private final Map<String, Class<?>> getTypes = new HashMap<>();
+  // 构造函数
   private Constructor<?> defaultConstructor;
-
+  // 所有属性的名称集合
   private Map<String, String> caseInsensitivePropertyMap = new HashMap<>();
 
   public Reflector(Class<?> clazz) {
     type = clazz;
+    // 加入构造函数
     addDefaultConstructor(clazz);
+    // 加入getter
     addGetMethods(clazz);
+    // 加入setter
     addSetMethods(clazz);
+    // 加入字段
     addFields(clazz);
+    // 根据get、set方法初始化可读属性集合和可写属性集合
     readablePropertyNames = getMethods.keySet().toArray(new String[getMethods.keySet().size()]);
     writeablePropertyNames = setMethods.keySet().toArray(new String[setMethods.keySet().size()]);
     for (String propName : readablePropertyNames) {

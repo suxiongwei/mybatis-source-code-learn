@@ -1,5 +1,5 @@
 /**
- *    Copyright ${license.git.copyrightYears} the original author or authors.
+ *    Copyright 2009-2020 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,19 +20,22 @@ import java.util.Properties;
 
 /**
  * MyBatis uses an ObjectFactory to create all needed new Objects.
- *
+ * learn
+ * 对象工厂，所有对象都要由工厂来产生
  * @author Clinton Begin
  */
 public interface ObjectFactory {
 
   /**
    * Sets configuration properties.
+   * 设置属性
    * @param properties configuration properties
    */
   void setProperties(Properties properties);
 
   /**
    * Creates a new object with default constructor.
+   * 生产对象
    * @param type Object type
    * @return
    */
@@ -40,6 +43,7 @@ public interface ObjectFactory {
 
   /**
    * Creates a new object with the specified constructor and params.
+   * 生产对象，使用指定的构造函数和构造函数参数
    * @param type Object type
    * @param constructorArgTypes Constructor argument types
    * @param constructorArgs Constructor argument values

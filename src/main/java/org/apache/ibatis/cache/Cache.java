@@ -1,5 +1,5 @@
 /**
- *    Copyright ${license.git.copyrightYears} the original author or authors.
+ *    Copyright 2009-2020 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import java.util.concurrent.locks.ReadWriteLock;
  *  initialize();
  * }
  * </pre>
- *
+ * learn
  * @author Clinton Begin
  */
 
@@ -47,12 +47,15 @@ public interface Cache {
   String getId();
 
   /**
+   * 向缓存中添加数据，key一般是cacheKey对象
    * @param key Can be any object but usually it is a {@link CacheKey}
    * @param value The result of a select.
+   *
    */
   void putObject(Object key, Object value);
 
   /**
+   * 根据指定的key获取数据
    * @param key The key
    * @return The object stored in the cache.
    */
