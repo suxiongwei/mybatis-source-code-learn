@@ -90,8 +90,11 @@ public class CacheBuilder {
   }
 
   public Cache build() {
+    // 设置缓存的主实现类为PerpetualCache
     setDefaultImplementations();
+    // 通过反射实例化PerpetualCache对象
     Cache cache = newBaseCacheInstance(implementation, id);
+    // 根据cache节点下的<property>信息，初始化cache
     setCacheProperties(cache);
     // issue #352, do not apply decorators to custom caches
     if (PerpetualCache.class.equals(cache.getClass())) {
@@ -99,8 +102,10 @@ public class CacheBuilder {
         cache = newCacheDecoratorInstance(decorator, cache);
         setCacheProperties(cache);
       }
+      // 通过一些属性为cache添加装饰器
       cache = setStandardDecorators(cache);
     } else if (!LoggingCache.class.isAssignableFrom(cache.getClass())) {
+      // 如果cache不是PerpetualCache的实现，则为其添加日志的能力
       cache = new LoggingCache(cache);
     }
     return cache;

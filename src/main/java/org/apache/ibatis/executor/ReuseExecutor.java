@@ -34,6 +34,8 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 
 /**
+ * learn
+ * 可复用的Executor
  * @author Clinton Begin
  */
 public class ReuseExecutor extends BaseExecutor {
@@ -55,8 +57,11 @@ public class ReuseExecutor extends BaseExecutor {
   @Override
   public <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
     Configuration configuration = ms.getConfiguration();
+    // 创建StatementHandler对象
     StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
+    // 通过StatementHandler创建Statement，并使用parameterHandler对占位符进行处理
     Statement stmt = prepareStatement(handler, ms.getStatementLog());
+    // 通过StatementHandler对象调用resultSetHandler将结果集转化为指定对象
     return handler.query(stmt, resultHandler);
   }
 
@@ -80,15 +85,20 @@ public class ReuseExecutor extends BaseExecutor {
   private Statement prepareStatement(StatementHandler handler, Log statementLog) throws SQLException {
     Statement stmt;
     BoundSql boundSql = handler.getBoundSql();
+    // 获取sql语句
     String sql = boundSql.getSql();
+    // 根据sql语句检查是否缓存可对应的Statement
     if (hasStatementFor(sql)) {
       stmt = getStatement(sql);
+      // 设置新的超时时间
       applyTransactionTimeout(stmt);
-    } else {
+    } else {// 缓存中没有Statement，创建Statement
       Connection connection = getConnection(statementLog);
       stmt = handler.prepare(connection, transaction.getTimeout());
+      // 放入缓存
       putStatement(sql, stmt);
     }
+    // 使用parameterHandler处理占位符
     handler.parameterize(stmt);
     return stmt;
   }

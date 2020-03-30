@@ -27,14 +27,26 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ * learn
+ * 实现了InvocationHandler接口，增强mapper接口的实现
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
 public class MapperProxy<T> implements InvocationHandler, Serializable {
 
   private static final long serialVersionUID = -6424540398559729838L;
+  /**
+   * 记录关联的sqlSession对象
+   */
   private final SqlSession sqlSession;
+  /**
+   * mapper接口对应的class对象
+   */
   private final Class<T> mapperInterface;
+  /**
+   * key是mapper接口中某个方法的Method对象，value是MapperMethod，
+   * MapperMethod不记录任何状态信息，所以可以在多个代理对象共享
+   */
   private final Map<Method, MapperMethod> methodCache;
 
   public MapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map<Method, MapperMethod> methodCache) {
@@ -46,6 +58,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
+      // 如果是Object本身的方法，不增强，比如hashCode、toString不需要增强
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, args);
       } else if (isDefaultMethod(method)) {
@@ -54,7 +67,9 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     } catch (Throwable t) {
       throw ExceptionUtil.unwrapThrowable(t);
     }
+    // 从缓存中读取mapperMethod对象，没有则添加
     final MapperMethod mapperMethod = cachedMapperMethod(method);
+    // 执行sql
     return mapperMethod.execute(sqlSession, args);
   }
 

@@ -95,42 +95,100 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * learn
+ * 配置
  * @author Clinton Begin
  */
 public class Configuration {
 
   protected Environment environment;
 
+  /**
+   * 是否启用行内嵌套语句
+   */
   protected boolean safeRowBoundsEnabled;
   protected boolean safeResultHandlerEnabled = true;
+  /**
+   * 是否启用驼峰命名
+   */
   protected boolean mapUnderscoreToCamelCase;
   protected boolean aggressiveLazyLoading;
   protected boolean multipleResultSetsEnabled = true;
+  /**
+   * 允许JDBC生成主键，需要驱动器支持
+   */
   protected boolean useGeneratedKeys;
+  /**
+   * 使用列标签代替列名。实际表现依赖于数据库驱动，具体可参考数据库驱动的相关文档，或通过对比测试来观察。
+   */
   protected boolean useColumnLabel = true;
+  /**
+   * 配置全局属性的cache开关，默认为true
+   */
   protected boolean cacheEnabled = true;
+
   protected boolean callSettersOnNulls;
   protected boolean useActualParamName = true;
   protected boolean returnInstanceForEmptyRow;
 
+  /**
+   * 指定 MyBatis 增加到日志名称的前缀。
+   */
   protected String logPrefix;
+  /**
+   * 指定 MyBatis 所用日志的具体实现，未指定时将自动查找。
+   */
   protected Class <? extends Log> logImpl;
   protected Class <? extends VFS> vfsImpl;
+  /**
+   * MyBatis 利用本地缓存机制（Local Cache）防止循环引用和加速重复的嵌套查询。
+   * 默认值为 SESSION，会缓存一个会话中执行的所有查询。
+   * 若设置值为 STATEMENT，本地缓存将仅用于执行语句，对相同 SqlSession 的不同查询将不会进行缓存
+   */
   protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
+  /**
+   * 当没有为参数指定特定的 JDBC 类型时，空值的默认 JDBC 类型。
+   * 某些数据库驱动需要指定列的 JDBC 类型，多数情况直接用一般类型即可，比如 NULL、VARCHAR 或 OTHER。
+   */
   protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
+  /**
+   * 指定对象的哪些方法触发一次延迟加载
+   */
   protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
+  /**
+   * 设置超时时间，它决定数据库驱动等待数据库响应的秒数
+   */
   protected Integer defaultStatementTimeout;
+  /**
+   * 为驱动的结果集获取数量（fetchSize）设置一个建议值。此参数只可以在查询设置中被覆盖
+   */
   protected Integer defaultFetchSize;
+  /**
+   * 配置默认的执行器。
+   * SIMPLE 就是普通的执行器；
+   * REUSE 执行器会重用预处理语句（PreparedStatement）；
+   * BATCH 执行器不仅重用语句还会执行批量更新
+   */
   protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
   protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
   protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
 
   protected Properties variables = new Properties();
   protected ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
+  /**
+   * 每次 MyBatis 创建结果对象的新实例时，它都会使用一个对象工厂（ObjectFactory）实例来完成实例化工作。
+   */
   protected ObjectFactory objectFactory = new DefaultObjectFactory();
   protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
 
+  /**
+   * 延迟加载的全局开关。当开启时，所有关联对象都会延迟加载。
+   * 特定关联关系中可通过设置 fetchType 属性来覆盖该项的开关状态。
+   */
   protected boolean lazyLoadingEnabled = false;
+  /**
+   * 指定 Mybatis 创建可延迟加载对象所用到的代理工具
+   */
   protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
 
   protected String databaseId;
@@ -142,9 +200,23 @@ public class Configuration {
    */
   protected Class<?> configurationFactory;
 
+  /**
+   * mapper接口的动态代理注册中心
+   */
   protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
+
+  /**
+   * 插件集合
+   */
   protected final InterceptorChain interceptorChain = new InterceptorChain();
+  /**
+   * TypeHandler注册中心
+   */
   protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
+  /**
+   * typeAlias注册中心
+   * typeAliases：类型别名可为 Java 类型设置一个缩写名字。 它仅用于 XML 配置，意在降低冗余的全限定类名书写
+   */
   protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 

@@ -29,18 +29,34 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ * learn
  * @author Clinton Begin
  */
 public final class MappedStatement {
 
+  /**
+   * 节点的完整id属性，包括命名空间
+   */
   private String resource;
   private Configuration configuration;
   private String id;
+  /**
+   * 查询数据的条数
+   */
   private Integer fetchSize;
+  /**
+   * 超时时间
+   */
   private Integer timeout;
+  /**
+   * 默认STATEMENT
+   */
   private StatementType statementType;
   private ResultSetType resultSetType;
   private SqlSource sqlSource;
+  /**
+   * 对应的二级缓存
+   */
   private Cache cache;
   private ParameterMap parameterMap;
   private List<ResultMap> resultMaps;
@@ -51,10 +67,16 @@ public final class MappedStatement {
   private KeyGenerator keyGenerator;
   private String[] keyProperties;
   private String[] keyColumns;
+  /**
+   * 是否有嵌套ResultMap
+   */
   private boolean hasNestedResultMaps;
   private String databaseId;
   private Log statementLog;
   private LanguageDriver lang;
+  /**
+   * 多结果集时使用
+   */
   private String[] resultSets;
 
   MappedStatement() {
@@ -68,6 +90,7 @@ public final class MappedStatement {
       mappedStatement.configuration = configuration;
       mappedStatement.id = id;
       mappedStatement.sqlSource = sqlSource;
+      // 默认用了预处理，效率更高，同时也可以防止sql注入
       mappedStatement.statementType = StatementType.PREPARED;
       mappedStatement.resultSetType = ResultSetType.DEFAULT;
       mappedStatement.parameterMap = new ParameterMap.Builder(configuration, "defaultParameterMap", null, new ArrayList<>()).build();

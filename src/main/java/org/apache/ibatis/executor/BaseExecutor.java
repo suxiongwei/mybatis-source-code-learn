@@ -45,6 +45,8 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * learn
+ * 抽象类，实现类了Executor的大部分方法，主要提供了缓存管理和事务管理的能力，其它子类需要实现的方法为doUpdate、doQuery等（用到了模版模式）
  * @author Clinton Begin
  */
 public abstract class BaseExecutor implements Executor {
@@ -52,13 +54,28 @@ public abstract class BaseExecutor implements Executor {
   private static final Log log = LogFactory.getLog(BaseExecutor.class);
 
   protected Transaction transaction;
+  /**
+   * 封装的Executor对象
+   */
   protected Executor wrapper;
 
+  /**
+   * 延迟加载的队列
+   */
   protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads;
+  /**
+   * 一级缓存的实现，PerpetualCache
+   */
   protected PerpetualCache localCache;
+  /**
+   * 一级缓存用于缓存输出的结果
+   */
   protected PerpetualCache localOutputParameterCache;
   protected Configuration configuration;
 
+  /**
+   * 用于嵌套查询的层数
+   */
   protected int queryStack;
   private boolean closed;
 
@@ -317,14 +334,28 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
+  /**
+   * 真正访问数据库获取结果的方法
+   * @param ms
+   * @param parameter
+   * @param rowBounds
+   * @param resultHandler
+   * @param key
+   * @param boundSql
+   * @param <E>
+   * @return
+   * @throws SQLException
+   */
   private <E> List<E> queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
     List<E> list;
+    // 在缓存中添加占位符
     localCache.putObject(key, EXECUTION_PLACEHOLDER);
     try {
       list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);
     } finally {
       localCache.removeObject(key);
     }
+    // 添加到一级缓存
     localCache.putObject(key, list);
     if (ms.getStatementType() == StatementType.CALLABLE) {
       localOutputParameterCache.putObject(key, parameter);
@@ -332,6 +363,12 @@ public abstract class BaseExecutor implements Executor {
     return list;
   }
 
+  /**
+   * 获取connection的动态代理，添加日志能力
+   * @param statementLog
+   * @return
+   * @throws SQLException
+   */
   protected Connection getConnection(Log statementLog) throws SQLException {
     Connection connection = transaction.getConnection();
     if (statementLog.isDebugEnabled()) {

@@ -43,15 +43,24 @@ import org.apache.ibatis.session.SqlSession;
  *
  * The default implementation for {@link SqlSession}.
  * Note that this class is not Thread-Safe.
- *
+ * learn
  * @author Clinton Begin
  */
 public class DefaultSqlSession implements SqlSession {
 
   private final Configuration configuration;
+  /**
+   * 底层依赖的Executor
+   */
   private final Executor executor;
 
+  /**
+   * 是否自动提交事务
+   */
   private final boolean autoCommit;
+  /**
+   * 当亲缓存是否有脏数据
+   */
   private boolean dirty;
   private List<Cursor<?>> cursorList;
 
@@ -144,7 +153,9 @@ public class DefaultSqlSession implements SqlSession {
   @Override
   public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
     try {
+      // 从configuration中获取要执行的sql语句的配置信息
       MappedStatement ms = configuration.getMappedStatement(statement);
+      // 通过executor执行语句，并返回指定的结果集
       return executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
     } catch (Exception e) {
       throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);

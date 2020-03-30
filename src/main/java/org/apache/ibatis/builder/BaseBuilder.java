@@ -29,11 +29,21 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * learn
  * @author Clinton Begin
  */
 public abstract class BaseBuilder {
+  /**
+   * 初始化过程的核心对象，xml配置文件的所有信息都会加载至此，全局唯一并单例
+   */
   protected final Configuration configuration;
+  /**
+   * TypeAlias别名信息记录在该对象
+   */
   protected final TypeAliasRegistry typeAliasRegistry;
+  /**
+   * typeHandler别名信息记录在该对象
+   */
   protected final TypeHandlerRegistry typeHandlerRegistry;
 
   public BaseBuilder(Configuration configuration) {

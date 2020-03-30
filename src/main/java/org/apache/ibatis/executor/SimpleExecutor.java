@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * learn
  * @author Clinton Begin
  */
 public class SimpleExecutor extends BaseExecutor {
@@ -80,10 +81,19 @@ public class SimpleExecutor extends BaseExecutor {
     return Collections.emptyList();
   }
 
+  /**
+   * 创建Statement
+   * @param handler
+   * @param statementLog
+   * @return
+   * @throws SQLException
+   */
   private Statement prepareStatement(StatementHandler handler, Log statementLog) throws SQLException {
     Statement stmt;
+    // 获取connection的动态代理，添加日志能力
     Connection connection = getConnection(statementLog);
     stmt = handler.prepare(connection, transaction.getTimeout());
+    // 使用parameterHandler处理占位符
     handler.parameterize(stmt);
     return stmt;
   }
