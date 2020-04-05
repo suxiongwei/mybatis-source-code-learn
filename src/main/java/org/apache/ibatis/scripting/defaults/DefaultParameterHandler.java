@@ -33,15 +33,28 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * learn
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
 public class DefaultParameterHandler implements ParameterHandler {
 
+  /**
+   * TypeHandler注册中心
+   */
   private final TypeHandlerRegistry typeHandlerRegistry;
 
+  /**
+   * 对应的sql节点的信息
+   */
   private final MappedStatement mappedStatement;
+  /**
+   * 用户传入的参数
+   */
   private final Object parameterObject;
+  /**
+   * sql语句的信息，其中还包括占位符和参数名称信息
+   */
   private final BoundSql boundSql;
   private final Configuration configuration;
 

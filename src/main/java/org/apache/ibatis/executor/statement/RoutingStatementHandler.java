@@ -30,15 +30,24 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 /**
+ * learn
+ * Executor组件真正实例化的子类，使用<strong>静态代理模式</strong>，根据上下文决定生成哪一个具体实现类
  * @author Clinton Begin
  */
 public class RoutingStatementHandler implements StatementHandler {
 
+  /**
+   * 封装底层的真正的StatementHandler对象
+   */
   private final StatementHandler delegate;
 
   public RoutingStatementHandler(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
 
     switch (ms.getStatementType()) {
+      /**
+       * RoutingStatementHandler最主要的功能就是根据mapperStatement的配置，生成一个对应的StatementHandler对象并赋值给delegate
+       * 如mapper.xml配置的：<select id="xxx" resultMap="xxx" statementType="STATEMENT">xxx</select>
+       */
       case STATEMENT:
         delegate = new SimpleStatementHandler(executor, ms, parameter, rowBounds, resultHandler, boundSql);
         break;

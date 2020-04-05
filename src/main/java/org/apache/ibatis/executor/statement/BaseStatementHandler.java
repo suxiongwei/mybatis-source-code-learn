@@ -42,13 +42,31 @@ public abstract class BaseStatementHandler implements StatementHandler {
   protected final Configuration configuration;
   protected final ObjectFactory objectFactory;
   protected final TypeHandlerRegistry typeHandlerRegistry;
+  /**
+   * 结果处理器，对数据库返回的结果集（ResultSet）进行封装，返回用户指定的实体类型
+   */
   protected final ResultSetHandler resultSetHandler;
+  /**
+   * sql占位符处理器，对预编译的sql语句进行参数设置
+   */
   protected final ParameterHandler parameterHandler;
 
+  /**
+   * 记录执行语句的executor对象
+   */
   protected final Executor executor;
+  /**
+   * 记录执行语句的mappedStatement对象
+   */
   protected final MappedStatement mappedStatement;
+  /**
+   * 分页信息
+   */
   protected final RowBounds rowBounds;
 
+  /**
+   * sql语句
+   */
   protected BoundSql boundSql;
 
   protected BaseStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
@@ -93,7 +111,7 @@ public abstract class BaseStatementHandler implements StatementHandler {
     ErrorContext.instance().sql(boundSql.getSql());
     Statement statement = null;
     try {
-      // 通过不同的子类实例化不同的statement，分别有：simple、prepare、callable
+      // 通过不同的子类实例化不同的statement，分别有：simple、prepare、callable，模板模式
       statement = instantiateStatement(connection);
       // 设置超时时间
       setStatementTimeout(statement, transactionTimeout);

@@ -63,6 +63,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * learn
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Iwao AVE!
@@ -180,23 +181,31 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   @Override
   public List<Object> handleResultSets(Statement stmt) throws SQLException {
     ErrorContext.instance().activity("handling results").object(mappedStatement.getId());
-
+    // 用于保存结果集对象
     final List<Object> multipleResults = new ArrayList<>();
 
     int resultSetCount = 0;
+    // Statement可能返回多个结果集对象，这里先取出第一个结果集
     ResultSetWrapper rsw = getFirstResultSet(stmt);
 
+    // 获取结果集对应的ResultMap，本质就是获取字段与java属性的映射规则
     List<ResultMap> resultMaps = mappedStatement.getResultMaps();
     int resultMapCount = resultMaps.size();
+    // 结果集和ResultMap不能为空，为空抛出异常
     validateResultMapsCount(rsw, resultMapCount);
     while (rsw != null && resultMapCount > resultSetCount) {
+      // 获取当前结果集对应的ResultMap
       ResultMap resultMap = resultMaps.get(resultSetCount);
+      // 根据映射规则ResultMap对结果集进行转化，转换成目标对象后放入multipleResults
       handleResultSet(rsw, resultMap, multipleResults, null);
+      // 获取下一个结果集
       rsw = getNextResultSet(stmt);
+      // 清空nestedResultObjects
       cleanUpAfterHandlingResultSet();
       resultSetCount++;
     }
 
+    // 获取多结果集，多结果集一般在存储过程的执行
     String[] resultSets = mappedStatement.getResultSets();
     if (resultSets != null) {
       while (rsw != null && resultSetCount < resultSets.length) {
