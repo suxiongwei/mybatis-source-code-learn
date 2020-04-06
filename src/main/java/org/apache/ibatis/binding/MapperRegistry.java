@@ -29,6 +29,8 @@ import java.util.Set;
 /**
  * learn
  * mapper接口的动态代理注册中心
+ * MyBatis框架在应用启动时会解析所有的Mapper接口，
+ * 然后调用MapperRegistry对象的addMapper()方法将Mapper接口信息和对应的MapperProxyFactory对象注册到MapperRegistry对象中
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Lasse Voss
@@ -45,6 +47,13 @@ public class MapperRegistry {
     this.config = config;
   }
 
+  /**
+   * 根据Mapper接口Class对象获取Mapper动态代理对象
+   * @param type
+   * @param sqlSession
+   * @param <T>
+   * @return
+   */
   @SuppressWarnings("unchecked")
   public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
     final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);

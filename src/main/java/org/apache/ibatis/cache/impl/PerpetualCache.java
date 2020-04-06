@@ -24,6 +24,7 @@ import org.apache.ibatis.cache.CacheException;
 
 /**
  * learn
+ * Perpetual[持久的]
  * @author Clinton Begin
  */
 public class PerpetualCache implements Cache {
@@ -74,6 +75,11 @@ public class PerpetualCache implements Cache {
     return null;
   }
 
+  /**
+   * PerpetualCache类重写了Object类的equals()方法，当两个缓存对象的Id相同时，即认为缓存对象相同。
+   * @param o
+   * @return
+   */
   @Override
   public boolean equals(Object o) {
     if (getId() == null) {
@@ -90,6 +96,10 @@ public class PerpetualCache implements Cache {
     return getId().equals(otherCache.getId());
   }
 
+  /**
+   * PerpetualCache类还重写了Object类的hashCode()方法，仅以缓存对象的Id作为因子生成hashCode。
+   * @return
+   */
   @Override
   public int hashCode() {
     if (getId() == null) {

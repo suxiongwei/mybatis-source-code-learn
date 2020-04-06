@@ -28,7 +28,7 @@ import org.apache.ibatis.session.SqlSession;
 
 /**
  * learn
- * 实现了InvocationHandler接口，增强mapper接口的实现
+ * 实现了InvocationHandler接口，增强mapper接口的实现，运用了代理模式
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
@@ -73,6 +73,12 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     return mapperMethod.execute(sqlSession, args);
   }
 
+  /**
+   * cachedMapperMethod()方法中对MapperMethod对象做了缓存，
+   * 首先从缓存中获取，如果获取不到，则创建MapperMethod对象，然后添加到缓存中，这是享元思想的应用，避免频繁创建和回收对象。
+   * @param method
+   * @return
+   */
   private MapperMethod cachedMapperMethod(Method method) {
     return methodCache.computeIfAbsent(method, k -> new MapperMethod(mapperInterface, method, sqlSession.getConfiguration()));
   }

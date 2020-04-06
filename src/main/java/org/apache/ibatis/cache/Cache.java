@@ -42,6 +42,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 public interface Cache {
 
   /**
+   * 该方法用于获取缓存的Id，通常情况下缓存的Id为Mapper的命名空间名称
    * @return The identifier of this cache
    */
   String getId();

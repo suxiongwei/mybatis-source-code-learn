@@ -35,7 +35,8 @@ public final class LogFactory {
   private static Constructor<? extends Log> logConstructor;
 
   /**
-   * 自动扫描日志实现，并且第三方日志插件优先级如下：slf4j -> commonsLogging -> log4j2 -> log4j -> jdkLog
+   * MyBatis查找日志框架的顺序为SLF4J→JCL→Log4j2→Log4j→JUL→No Logging。
+   * 如果Classpath下不存在任何日志框架，则使用NoLoggingImpl日志实现类，即不输出任何日志
    */
   static {
     tryImplementation(LogFactory::useSlf4jLogging);
@@ -109,12 +110,13 @@ public final class LogFactory {
 
   private static void setImplementation(Class<? extends Log> implClass) {
     try {
+      // 获取日志实现类的Constructor对象
       Constructor<? extends Log> candidate = implClass.getConstructor(String.class);
       Log log = candidate.newInstance(LogFactory.class.getName());
       if (log.isDebugEnabled()) {
         log.debug("Logging initialized using '" + implClass + "' adapter.");
       }
-      // learn：设置logConstructor,一旦设上，表明找到相应的log的jar包了，那后面别的log就不找了。
+      // 设置logConstructor,一旦设上，表明找到相应的log的jar包了，那后面别的log就不找了。
       logConstructor = candidate;
     } catch (Throwable t) {
       throw new LogException("Error setting Log implementation.  Cause: " + t, t);

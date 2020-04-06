@@ -35,6 +35,7 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
  * learn
+ * BaseStatementHandler是一个抽象类，封装了通用的处理逻辑及方法执行流程，具体方法的实现由子类完成，这里使用到了设计模式中的模板方法模式
  * @author Clinton Begin
  */
 public abstract class BaseStatementHandler implements StatementHandler {

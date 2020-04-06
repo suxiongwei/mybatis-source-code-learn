@@ -34,12 +34,16 @@ import org.apache.ibatis.transaction.Transaction;
 
 /**
  * learn
- * 二级缓存的实现
+ * 当MyBatis开启了二级缓存功能时，会使用CachingExecutor对SimpleExecutor、ResueExecutor、BatchExecutor进行装饰，
+ * 为查询操作增加二级缓存功能，这是装饰器模式的应用
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
 public class CachingExecutor implements Executor {
 
+  /**
+   * delegate为代表的意思，在这比表示被装饰的对象
+   */
   private final Executor delegate;
   private final TransactionalCacheManager tcm = new TransactionalCacheManager();
 

@@ -148,8 +148,11 @@ public abstract class BaseExecutor implements Executor {
 
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
+    // 获取BoundSql对象，BoundSql是对动态sql解析生成之后的sql语句和参数映射信息的封装
     BoundSql boundSql = ms.getBoundSql(parameter);
+    // 创建CacheKey，用于缓存key
     CacheKey key = createCacheKey(ms, parameter, rowBounds, boundSql);
+    // 调用重载的query()方法
     return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
  }
 
@@ -166,6 +169,7 @@ public abstract class BaseExecutor implements Executor {
     List<E> list;
     try {
       queryStack++;
+      // 首先从MyBatis一级缓存中获取查询结果
       list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
       if (list != null) {
         handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
@@ -290,6 +294,17 @@ public abstract class BaseExecutor implements Executor {
   protected abstract List<BatchResult> doFlushStatements(boolean isRollback)
       throws SQLException;
 
+  /**
+   * doQuery()是一个模板方法，由BaseExecutor子类实现
+   * @param ms
+   * @param parameter
+   * @param rowBounds
+   * @param resultHandler
+   * @param boundSql
+   * @param <E>
+   * @return
+   * @throws SQLException
+   */
   protected abstract <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql)
       throws SQLException;
 
@@ -351,6 +366,7 @@ public abstract class BaseExecutor implements Executor {
     // 在缓存中添加占位符
     localCache.putObject(key, EXECUTION_PLACEHOLDER);
     try {
+      // doQuery()是一个模板方法，由BaseExecutor子类实现
       list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);
     } finally {
       localCache.removeObject(key);

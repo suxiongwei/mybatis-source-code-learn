@@ -618,25 +618,63 @@ public class Configuration {
     return MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
   }
 
+  /**
+   * ParameterHandler组件工厂方法
+   * @param mappedStatement
+   * @param parameterObject
+   * @param boundSql
+   * @return
+   */
   public ParameterHandler newParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
     ParameterHandler parameterHandler = mappedStatement.getLang().createParameterHandler(mappedStatement, parameterObject, boundSql);
+    // 实现插件拦截逻辑
     parameterHandler = (ParameterHandler) interceptorChain.pluginAll(parameterHandler);
     return parameterHandler;
   }
 
+  /**
+   * ResultSetHandler组件工厂方法
+   * @param executor
+   * @param mappedStatement
+   * @param rowBounds
+   * @param parameterHandler
+   * @param resultHandler
+   * @param boundSql
+   * @return
+   */
   public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, RowBounds rowBounds, ParameterHandler parameterHandler,
       ResultHandler resultHandler, BoundSql boundSql) {
     ResultSetHandler resultSetHandler = new DefaultResultSetHandler(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
+    // 实现插件拦截逻辑
     resultSetHandler = (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
     return resultSetHandler;
   }
 
+  /**
+   * StatementHandler组件工厂方法
+   * 创建StatementHandler对象,newStatementHandler()方法返回的是RoutingStatementHandler的实例。
+   * 在RoutingStatementHandler类中，会根据配置Mapper时statementType属性指定的StatementHandler类型
+   * 创建对应的StatementHandler实例进行处理，例如statementType属性值为SIMPLE时，则创建SimpleStatementHandler实例
+   * @param executor
+   * @param mappedStatement
+   * @param parameterObject
+   * @param rowBounds
+   * @param resultHandler
+   * @param boundSql
+   * @return
+   */
   public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
     StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
+    // 实现插件拦截逻辑
     statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
     return statementHandler;
   }
 
+  /**
+   * Executor组件工厂方法
+   * @param transaction
+   * @return
+   */
   public Executor newExecutor(Transaction transaction) {
     return newExecutor(transaction, defaultExecutorType);
   }

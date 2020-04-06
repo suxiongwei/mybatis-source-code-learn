@@ -59,7 +59,9 @@ public class SimpleExecutor extends BaseExecutor {
     Statement stmt = null;
     try {
       Configuration configuration = ms.getConfiguration();
+      // 创建StatementHandler对象,newStatementHandler()方法返回的是RoutingStatementHandler的实例。
       StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
+      // 创建JDBC中的Statement对象，然后为Statement对象设置参数操作
       stmt = prepareStatement(handler, ms.getStatementLog());
       return handler.query(stmt, resultHandler);
     } finally {
@@ -82,7 +84,7 @@ public class SimpleExecutor extends BaseExecutor {
   }
 
   /**
-   * 创建Statement
+   * 创建JDBC中的Statement对象，然后为Statement对象设置参数操作
    * @param handler
    * @param statementLog
    * @return
