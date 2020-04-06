@@ -1,11 +1,12 @@
+# MyBatis源码学习
+
 ## 搭建MyBatis源码环境
+
 1. 下载源码：https://github.com/mybatis/mybatis-3
 2. mybatis的源码是maven工程，在编辑器进行导入
-3. 把mybatis源码的pom文件<optional>true</optional>,全部改为false
-4. 在工程目录下执行 mvn clean install -Dmaven.test.skip=true 将当前工程安装到本地仓库
+3. 把mybatis源码的pom文件```<optional>true</optional>```,全部改为false
+4. 在工程目录下执行 ```mvn clean install -Dmaven.test.skip=true``` 将当前工程安装到本地仓库（```mvn clean source:jar install -Dmaven.test.skip=true``` 将**源码**也同时安装到本地仓库）
 5. 其它工程依赖此工程
-
-> mvn clean source:jar install -Dmaven.test.skip=true 将**源码**也同时安装到本地仓库
 
 ## MyBatis核心组件介绍
 
@@ -49,7 +50,7 @@ MyBatis的初始化，就是建立一个Configuration对象。Configuration对�
 #### 用到的设计模式：
 
 - 工厂方法模式：Configuration组件作为Executor、StatementHandler、ResultSetHandler、ParameterHandler组件的工厂类，用于创建这些组件的实例。Configuration类中提供了这些组件的工厂方法，例如，Executor组件有4种不同的实现，分别为BatchExecutor、ReuseExecutor、SimpleExecutor、CachingExecutor，当defaultExecutorType的参数值为REUSE时，newExecutor()方法返回的是ReuseExecutor实例，当参数值为SIMPLE时，返回的是SimpleExecutor实例，这是典型的工厂方法模式的应用
-- 建造者模式：
+- 建造者模式：XMLConfigBuilder、XMLMapperBuilder、XMLStatementBuilder这三个Builder看上去不是流式风格，不像建造者模式，但是用到了建造者模式的设计思想，核心目的都是为了创建Configuration对象。
 
 #### 源码分析的入口
 
@@ -70,8 +71,6 @@ Configuration：
 - XMLMapperBuilder：主要负责解析映射配置文件
 
 - XMLStatementBuilder：主要负责解析映射配置文件中的SQL节点
-
-这三个Builder看上去不是流式风格，不像建造者模式，但是用到了建造者模式的设计思想，核心目的都是为了创建Configuration对象。
 
 映射器的核心类：
 
@@ -96,7 +95,7 @@ SqlSession是MyBatis对外提供的最关键的接口，通过它可以执行数
 
 #### 用到的设计模式：
 
-- 策略模式
+- 策略模式：SqlSession中的策略模式体现在：创建数据源有3种方式，POOL、UNPOOL和JNDI。在创建Sqlsession的时候，是根据环境创建的，在Environment里面会指定数据源的方式，对于Sqlsession的使用代码来说，不管底层是如何创建Sqlsession的，都没有关系。只需要改配置，数据源模块就能够生产出3种不同类型的SqlSession。
 - 外观模式：SqlSession是Executor组件的外观，目的是为用户提供更友好的数据库操作接口，这是设计模式中外观模式的典型应用。真正执行SQL操作的是Executor组件，Executor可以理解为SQL执行器。
 - 装饰器模式：MyBatis支持一级缓存和二级缓存，当MyBatis开启了二级缓存功能时，会使用CachingExecutor对SimpleExecutor、ResueExecutor、BatchExecutor进行装饰，为查询操作增加二级缓存功能，这是装饰器模式的应用。
 - 模板方法模式：BaseStatementHandler是一个抽象类，封装了通用的处理逻辑及方法执行流程，具体方法的实现由子类完成，这里使用到了设计模式中的模板方法模式。
@@ -228,9 +227,9 @@ StatementHandler接口的实现大致有四个，其中三个实现类都是和J
 
 #### 用到的设计模式：
 
-- 适配器模式
+- 适配器模式：在JAVA开发中，常用的日志框架有Log4j、Log4j2、java.util.logging、slf4j等，这些工具对外的接口不尽相同，为了统一这些工具的接口，MyBatis定义了一套统一的日志接口供上层使用。即用到了适配器模式。
 
-- 代理模式
+- 代理模式：在日志模块的jdbc包下，包含很多个类，他们对JDBC的几个核心类进行的动态代理增强，变成了具备日志打印功能的类，我们看看StatementLogger，他是具备日志打印功能的Statement。
 - 工厂模式：使用LogFactory获取Log实例
 
 #### 核心代码
@@ -310,7 +309,7 @@ MyBatis提供了一级缓存和二级缓存，其中一级缓存基于SqlSession
 
   二级缓存容易出现脏读，不建议使用
 
-  >  在两个namespace下都有同一份数据的副本，其中一个namespace对数据修改之后，另一个namespace就	会出现脏读（关联查询容易出现这个问题）
+  在两个namespace下都有同一份数据的副本，其中一个namespace对数据修改之后，另一个namespace就	会出现脏读（关联查询容易出现这个问题）
 
 除了核心功能之外，有很多的附加功能，如：防止缓存击穿，添加缓存清空策略、序列化能力、日志能力、定时清空能力，附加功能可以以任意的组合附加到核心功能之上。
 
@@ -406,7 +405,11 @@ MyBatis除了提供内置的一级缓存和二级缓存外，还支持使用第�
 - SqlSource：SqlSource用于描述SQL资源，SqlSource接口有4个不同的实现，分别为StaticSqlSource、DynamicSqlSource、RawSqlSource和ProviderSqlSource。
 - BoundSql：BoundSql是对动态sql解析生成之后的sql语句和参数映射信息的封装
 
-> SqlSource用于描述MyBatis中的SQL资源信息，LanguageDriver用于解析SQL配置，将SQL配置信息转换为SqlSource对象，SqlNode用于描述动态SQL中if、where等标签信息，LanguageDriver解析SQL配置时，会把if、where等动态SQL标签转换为SqlNode对象，封装在SqlSource中。而解析后的SqlSource对象会作为MappedStatement对象的属性保存在MappedStatement对象中。执行Mapper时，会根据传入的参数信息调用SqlSource对象的getBoundSql()方法获取BoundSql对象，这个过程就完成了将SqlNode对象转换为SQL语句的过程。
+### 实现原理
+
+SqlSource用于描述MyBatis中的SQL资源信息，LanguageDriver用于解析SQL配置，将SQL配置信息转换为SqlSource对象，SqlNode用于描述动态SQL中if、where等标签信息，LanguageDriver解析SQL配置时，会把if、where等动态SQL标签转换为SqlNode对象，封装在SqlSource中。而解析后的SqlSource对象会作为MappedStatement对象的属性保存在MappedStatement对象中。执行Mapper时，会根据传入的参数信息调用SqlSource对象的getBoundSql()方法获取BoundSql对象，这个过程就完成了将SqlNode对象转换为SQL语句的过程。
+
+------
 
 预编译 #{}：将传入的参数都当作一个字符串，会对自动传入的参数加一个单引号，能够很大程度防止sql注入
 
@@ -460,4 +463,5 @@ Java的连接池和数据库的连接池是有关联的
 暴力反射，不考虑方法访问修饰符的作用范围 public、private，没有get、set方法也会生成
 
 先调用二级缓存再一级缓存
+
 [TOC]
