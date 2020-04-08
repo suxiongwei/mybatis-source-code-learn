@@ -3,14 +3,20 @@
 ## 搭建MyBatis源码环境
 
 1. 下载源码：https://github.com/mybatis/mybatis-3
+
 2. mybatis的源码是maven工程，在编辑器进行导入
+
 3. 把mybatis源码的pom文件```<optional>true</optional>```,全部改为false
-4. 在工程目录下执行 ```mvn clean install -Dmaven.test.skip=true``` 将当前工程安装到本地仓库（```mvn clean source:jar install -Dmaven.test.skip=true``` 将**源码**也同时安装到本地仓库）
+
+4. 在工程目录下执行 ```mvn clean install -Dmaven.test.skip=true``` 将当前工程安装到本地仓库。
+
+   附：（```mvn clean source:jar install -Dmaven.test.skip=true``` 可以将**源码**也同时安装到本地仓库）
+
 5. 其它工程依赖此工程
 
 ## MyBatis核心组件介绍
 
-- Configuration：用于描述MyBatis的主配置信息，其他组件需要获取配置信息时，直接通过Configuration对象获取。除此之外，MyBatis在应用启动时，将Mapper配置信息、类型别名、TypeHandler等注册到Configuration组件中，其他组件需要这些信息时，也可以从Configuration对象中获取
+- Configuration：用于描述MyBatis的主配置信息，其他组件需要获取配置信息时，直接通过Configuration对象获取。除此之外，MyBatis在应用启动时，将Mapper配置信息、类型别名、TypeHandler等注册到Configuration组件中，其他组件需要这些信息时，也可以从Configuration对象中获取。
 - MappedStatement：MappedStatement用于描述Mapper中的SQL配置信息，是对Mapper XML配置文件中<select|update|delete|insert>等标签或者@Select/@Update等注解配置信息的封装。
 - SqlSession：SqlSession是MyBatis提供的面向用户的API，表示和数据库交互时的会话对象，用于完成数据库的增删改查功能。SqlSession是Executor组件的外观，目的是对外提供易于理解和使用的数据库操作接口。
 - Executor：Executor是MyBatis的SQL执行器，MyBatis中对数据库所有的增删改查操作都是由Executor组件完成的。
@@ -43,13 +49,11 @@
 
 ### MyBatis启动流程源码分析
 
-MyBatis框架启动时，会对所有的配置信息进行解析，然后将解析后的内容注册到Configuration对象的这些属性中。
-
-MyBatis的初始化，就是建立一个Configuration对象。Configuration对象加载到内存，在内存中各个配置都有一个实体进行对应。
+MyBatis框架启动时，会对所有的配置信息进行解析，然后将解析后的内容注册到Configuration对象的这些属性中。（MyBatis的初始化，就是建立一个Configuration对象。Configuration对象加载到内存，在内存中各个配置都有一个实体进行对应。）
 
 #### 用到的设计模式：
 
-- 工厂方法模式：Configuration组件作为Executor、StatementHandler、ResultSetHandler、ParameterHandler组件的工厂类，用于创建这些组件的实例。Configuration类中提供了这些组件的工厂方法，例如，Executor组件有4种不同的实现，分别为BatchExecutor、ReuseExecutor、SimpleExecutor、CachingExecutor，当defaultExecutorType的参数值为REUSE时，newExecutor()方法返回的是ReuseExecutor实例，当参数值为SIMPLE时，返回的是SimpleExecutor实例，这是典型的工厂方法模式的应用
+- 工厂方法模式：Configuration组件作为Executor、StatementHandler、ResultSetHandler、ParameterHandler组件的工厂类，用于创建这些组件的实例。Configuration类中提供了这些组件的工厂方法，例如，Executor组件有4种不同的实现，分别为BatchExecutor、ReuseExecutor、SimpleExecutor、CachingExecutor，当defaultExecutorType的参数值为REUSE时，newExecutor()方法返回的是ReuseExecutor实例，当参数值为SIMPLE时，返回的是SimpleExecutor实例，这是典型的工厂方法模式的应用。
 - 建造者模式：XMLConfigBuilder、XMLMapperBuilder、XMLStatementBuilder这三个Builder看上去不是流式风格，不像建造者模式，但是用到了建造者模式的设计思想，核心目的都是为了创建Configuration对象。
 
 #### 源码分析的入口
@@ -99,11 +103,11 @@ SqlSession是MyBatis对外提供的最关键的接口，通过它可以执行数
 - 外观模式：SqlSession是Executor组件的外观，目的是为用户提供更友好的数据库操作接口，这是设计模式中外观模式的典型应用。真正执行SQL操作的是Executor组件，Executor可以理解为SQL执行器。
 - 装饰器模式：MyBatis支持一级缓存和二级缓存，当MyBatis开启了二级缓存功能时，会使用CachingExecutor对SimpleExecutor、ResueExecutor、BatchExecutor进行装饰，为查询操作增加二级缓存功能，这是装饰器模式的应用。
 - 模板方法模式：BaseStatementHandler是一个抽象类，封装了通用的处理逻辑及方法执行流程，具体方法的实现由子类完成，这里使用到了设计模式中的模板方法模式。
-- 工厂模式：MyBatis中的SqlSession实例使用工厂模式创建，所以在创建SqlSession实例之前需要先创建SqlSessionFactory工厂对象，然后调用SqlSessionFactory对象的openSession()方法
-- 享元模式：ReuseExecutor 可重用的执行器，重用的对象是Statement，这是享元思想的应用
-- 动态代理模式：MapperProxy使用的是JDK内置的动态代理，实现了InvocationHandler接口，invoke()方法中为通用的拦截逻辑
-- 静态代理模式：RoutingStatementHandler使用静态代理模式，根据上下文决定生成哪一个具体实现类
-- 建造者模式：SqlSessionFactoryBuilder：读取配置信息创建SqlSessionFactory，建造者模式，方法级别生命周期
+- 工厂模式：MyBatis中的SqlSession实例使用工厂模式创建，所以在创建SqlSession实例之前需要先创建SqlSessionFactory工厂对象，然后调用SqlSessionFactory对象的openSession()方法。
+- 享元模式：ReuseExecutor 可重用的执行器，重用的对象是Statement，这是享元思想的应用。
+- 动态代理模式：MapperProxy使用的是JDK内置的动态代理，实现了InvocationHandler接口，invoke()方法中为通用的拦截逻辑。
+- 静态代理模式：RoutingStatementHandler使用静态代理模式，根据上下文决定生成哪一个具体实现类。
+- 建造者模式：SqlSessionFactoryBuilder读取配置信息创建SqlSessionFactory，建造者模式，方法级别生命周期。
 
 #### Executor组件分析：
 
@@ -230,7 +234,7 @@ StatementHandler接口的实现大致有四个，其中三个实现类都是和J
 - 适配器模式：在JAVA开发中，常用的日志框架有Log4j、Log4j2、java.util.logging、slf4j等，这些工具对外的接口不尽相同，为了统一这些工具的接口，MyBatis定义了一套统一的日志接口供上层使用。即用到了适配器模式。
 
 - 代理模式：在日志模块的jdbc包下，包含很多个类，他们对JDBC的几个核心类进行的动态代理增强，变成了具备日志打印功能的类，我们看看StatementLogger，他是具备日志打印功能的Statement。
-- 工厂模式：使用LogFactory获取Log实例
+- 工厂模式：使用LogFactory获取Log实例。
 
 #### 核心代码
 
@@ -309,7 +313,7 @@ MyBatis提供了一级缓存和二级缓存，其中一级缓存基于SqlSession
 
   二级缓存容易出现脏读，不建议使用
 
-  在两个namespace下都有同一份数据的副本，其中一个namespace对数据修改之后，另一个namespace就	会出现脏读（关联查询容易出现这个问题）
+  在两个namespace下都有同一份数据的副本，其中一个namespace对数据修改之后，另一个namespace就会出现脏读（关联查询容易出现这个问题）
 
 除了核心功能之外，有很多的附加功能，如：防止缓存击穿，添加缓存清空策略、序列化能力、日志能力、定时清空能力，附加功能可以以任意的组合附加到核心功能之上。
 
