@@ -27,7 +27,9 @@
 ## mybatis的整体架构
 
 接口层：SqlSession
+
 核心处理层：配置解析、参数映射、SQL解析、SQL执行、结果集映射、插件
+
 基础支撑层：数据源、事务管理、缓存、Binding模块、反射、类型转换、日志模块、资源加载、解析器
 
 ## MyBatis的核心流程
@@ -71,7 +73,7 @@ Configuration：
 - XMLMapperBuilder：主要负责解析映射配置文件
 - XMLStatementBuilder：主要负责解析映射配置文件中的SQL节点
 
-映射器的核心类：
+#### 映射器的核心类：
 
 - Configuration：MyBatis启动初始化的核心就是将所有xml配置文件信息加载到Configuration对象中，Configuration是单例的，生命周期是应用级的
 - MapperRegistry：mapper接口动态代理工厂类的注册中心。在MyBatis中，通过mapperProxy实现InvocationHandler接口，MapperProxyFactory用于生成动态代理的实例对象，MyBatis框架在应用启动时会解析所有的Mapper接口，然后调用MapperRegistry对象的addMapper()方法将Mapper接口信息和对应的MapperProxyFactory对象注册到MapperRegistry对象中。
@@ -83,7 +85,7 @@ Configuration：
   - 通过XML文件配置；
   - 是通过Java注解，注解方式的（@Insert,@Select）不推介用，可读性差。
 
-- SqlSource：mapper.xml的sql语句会被解析成SqlSource对象，经过解析SqlSource包含的语句最终仅包含？占位符，可以直接提交给数据库执行
+- SqlSource：mapper.xml的sql语句会被解析成SqlSource对象，经过解析SqlSource包含的语句最终仅包含 ？占位符，可以直接提交给数据库执行
 
 ### SqlSession创建源码分析
 
@@ -199,7 +201,7 @@ StatementHandler接口的实现大致有四个，其中三个实现类都是和J
      }
    ```
 
-5. 调用doQuery()方法进行查询，然后将查询结果进行缓存，doQuery()是一个模板方法，由BaseExecutor子类实现。
+5. 调用doQuery()方法进行查询，然后将查询结果进行缓存，doQuery()是一个模板方法，由BaseExecutor子类实现。doQuery()方法代码如下：
 
    ```java
    public <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
@@ -276,7 +278,7 @@ private static void setImplementation(Class<? extends Log> implClass) {
 
 MyBatis不但可以集成第三方的数据源组件，自己也实现了数据源的实现
 
-核心类：
+#### 核心类：
 
 1. PooledConnection：使用动态代理封装了真正的数据库连接对象
 2. PoolState：用于管理PooledConnection对象状态的组件，通过两个list分别管理空闲状态的连接资源和活跃状态的连接资源
@@ -287,16 +289,19 @@ MyBatis不但可以集成第三方的数据源组件，自己也实现了数据�
 MyBatis提供了一级缓存和二级缓存，其中一级缓存基于SqlSession实现，而二级缓存基于Mapper实现。MyBatis的缓存是基于map实现的，从缓存里面读取数据是缓存模块的核心基础功能。
 
 - 一级缓存
+  
   一级缓存默认开启，一级缓存存在于sqlSession的生命周期内
+  
 - 二级缓存
+  
   存在于SqlSessionFactory的生命周期中，可以理解为跨sqlSession，缓存是以namespace为单位
   setting参数cacheEnabled，这个参数是二级缓存的全局开关
-  要使用还需要配置
-
-  ```<cache eviction = "FIFO" flushInterval="60000" size = "512" readonly="true">```
-
-  二级缓存容易出现脏读，不建议使用
-
+要使用还需要配置
+  
+```<cache eviction = "FIFO" flushInterval="60000" size = "512" readonly="true">```
+  
+二级缓存容易出现脏读，不建议使用
+  
   在两个namespace下都有同一份数据的副本，其中一个namespace对数据修改之后，另一个namespace就会出现脏读（关联查询容易出现这个问题）
 
 除了核心功能之外，有很多的附加功能，如：防止缓存击穿，添加缓存清空策略、序列化能力、日志能力、定时清空能力，附加功能可以以任意的组合附加到核心功能之上。
@@ -395,7 +400,9 @@ SqlSource用于描述MyBatis中的SQL资源信息，LanguageDriver用于解析SQ
 ------
 
 预编译 #{}：将传入的参数都当作一个字符串，会对自动传入的参数加一个单引号，能够很大程度防止sql注入
+
 传值 ${}：传入的参数直接显示生成到sql中，无法防止sql注入
+
 表名，选取的列是动态的，order by和in操作，可以考虑使用${}
 
 ## MyBatis插件原理
