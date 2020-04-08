@@ -9,8 +9,7 @@
 3. 把mybatis源码的pom文件```<optional>true</optional>```,全部改为false
 
 4. 在工程目录下执行 ```mvn clean install -Dmaven.test.skip=true``` 将当前工程安装到本地仓库。
-
-   附：（```mvn clean source:jar install -Dmaven.test.skip=true``` 可以将**源码**也同时安装到本地仓库）
+	附：（```mvn clean source:jar install -Dmaven.test.skip=true``` 可以将**源码**也同时安装到本地仓库）
 
 5. 其它工程依赖此工程
 
@@ -28,9 +27,7 @@
 ## mybatis的整体架构
 
 接口层：SqlSession
-
 核心处理层：配置解析、参数映射、SQL解析、SQL执行、结果集映射、插件
-
 基础支撑层：数据源、事务管理、缓存、Binding模块、反射、类型转换、日志模块、资源加载、解析器
 
 ## MyBatis的核心流程
@@ -71,19 +68,14 @@ public void init() throws IOException {
 Configuration：
 
 - XMLConfigBuilder：主要负责解析mybatis-config.xml
-
 - XMLMapperBuilder：主要负责解析映射配置文件
-
 - XMLStatementBuilder：主要负责解析映射配置文件中的SQL节点
 
 映射器的核心类：
 
 - Configuration：MyBatis启动初始化的核心就是将所有xml配置文件信息加载到Configuration对象中，Configuration是单例的，生命周期是应用级的
-
 - MapperRegistry：mapper接口动态代理工厂类的注册中心。在MyBatis中，通过mapperProxy实现InvocationHandler接口，MapperProxyFactory用于生成动态代理的实例对象，MyBatis框架在应用启动时会解析所有的Mapper接口，然后调用MapperRegistry对象的addMapper()方法将Mapper接口信息和对应的MapperProxyFactory对象注册到MapperRegistry对象中。
-
 - ResultMap：用于解析mapper.xml中的ResultMap节点，使用ResultMapping来封装id、result等子元素
-
 - MappedStatment：用于存储mapper.xml文件中的select、insert、update和delete语句，同时还包含了这些节点的很多重要属性。
 
   SQL配置有两种方式：
@@ -122,11 +114,9 @@ Executor的三个实现类解读：
 #### StatementHandler组件分析：
 
 StatementHandler完成MyBatis最核心的工作，也是Executor实现的基础；
-
 功能包括：创建statement对象、为sql语句绑定参数、执行增删改查等sql语句、将结果集进行转化
 
 StatementHandler接口的实现大致有四个，其中三个实现类都是和JDBC中的Statement响对应的：
-
 - SimpleStatementHandler，这个很简单了，就是对应我们JDBC中常用的Statement接口，用于简单SQL的处理；
 - PreparedStatementHandler，这个对应JDBC中的PreparedStatement，预编译SQL的接口；
 - CallableStatementHandler，这个对应JDBC中CallableStatement，用于执行存储过程相关的接口；
@@ -232,7 +222,6 @@ StatementHandler接口的实现大致有四个，其中三个实现类都是和J
 #### 用到的设计模式：
 
 - 适配器模式：在JAVA开发中，常用的日志框架有Log4j、Log4j2、java.util.logging、slf4j等，这些工具对外的接口不尽相同，为了统一这些工具的接口，MyBatis定义了一套统一的日志接口供上层使用。即用到了适配器模式。
-
 - 代理模式：在日志模块的jdbc包下，包含很多个类，他们对JDBC的几个核心类进行的动态代理增强，变成了具备日志打印功能的类，我们看看StatementLogger，他是具备日志打印功能的Statement。
 - 工厂模式：使用LogFactory获取Log实例。
 
@@ -298,15 +287,10 @@ MyBatis不但可以集成第三方的数据源组件，自己也实现了数据�
 MyBatis提供了一级缓存和二级缓存，其中一级缓存基于SqlSession实现，而二级缓存基于Mapper实现。MyBatis的缓存是基于map实现的，从缓存里面读取数据是缓存模块的核心基础功能。
 
 - 一级缓存
-
   一级缓存默认开启，一级缓存存在于sqlSession的生命周期内
-
 - 二级缓存
-
   存在于SqlSessionFactory的生命周期中，可以理解为跨sqlSession，缓存是以namespace为单位
-
   setting参数cacheEnabled，这个参数是二级缓存的全局开关
-
   要使用还需要配置
 
   ```<cache eviction = "FIFO" flushInterval="60000" size = "512" readonly="true">```
@@ -324,15 +308,11 @@ MyBatis提供了一级缓存和二级缓存，其中一级缓存基于SqlSession
 #### 核心模块：
 
 - Cache：Cache接口是缓存模块的核心接口，定义了缓存模块的基本操作
-
 - PerpetualCache：在缓存模块中扮演ConcreteComponent角色，使用HashMap来实现cache的相关操作
-
 - BlockingCache：阻塞版本的缓存装饰器，保证只有一个线程到数据库去查找指定key对应的数据，以下为锁的粒度：
 
   - 粗粒度：所有的请求用一把锁，安全，但是有效率问题
-
   - 细粒度（按key）
-
     ```java
     public Object getObject(Object key) {
        // 先获取锁，，获取成功加锁，获取失败阻塞一段时间重试
@@ -345,7 +325,6 @@ MyBatis提供了一级缓存和二级缓存，其中一级缓存基于SqlSession
        return value;
     }
     ```
-
 - CacheKey：MyBatis涉及到动态SQL的原因，缓存项的key不能仅仅通过一个String来表示，所以通过CacheKey来封装key值，CacheKey可以封装多个影响缓存key的因素
 
   构成CacheKey的对象：
@@ -416,19 +395,15 @@ SqlSource用于描述MyBatis中的SQL资源信息，LanguageDriver用于解析SQ
 ------
 
 预编译 #{}：将传入的参数都当作一个字符串，会对自动传入的参数加一个单引号，能够很大程度防止sql注入
-
 传值 ${}：传入的参数直接显示生成到sql中，无法防止sql注入
-
 表名，选取的列是动态的，order by和in操作，可以考虑使用${}
 
 ## MyBatis插件原理
-
 插件时用来改变或者扩展mybatis原有的功能，通过实现Interceptor接口
 
 MyBatis在四大对象的创建过程中，都会有插件进行介入。插件可以利用动态代理机制一层层的包装目标对象，而实现在目标对象执行目标方法之前进行拦截的效果。
 
 MyBatis 允许在已映射语句执行过程中的某一点进行拦截调用。
-
 默认情况下，MyBatis 允许使用插件来拦截的方法调用包括：
 
 - Executor(update, query, flushStatements, commit, rollback, getTransaction, close, isClosed)
