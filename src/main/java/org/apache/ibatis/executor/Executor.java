@@ -28,8 +28,8 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 
 /**
- * learn
  * @author Clinton Begin
+ * Executor是MyBatis的核心接口之一，定义了数据操作的基本方法，SqlSession的功能都是基于它来实现的
  */
 public interface Executor {
 

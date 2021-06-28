@@ -47,7 +47,6 @@ import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
 
 /**
- * learn
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
@@ -100,6 +99,11 @@ public class XMLConfigBuilder extends BaseBuilder {
     return configuration;
   }
 
+  /**
+   * 构建Configuration
+   *
+   * @param root
+   */
   private void parseConfiguration(XNode root) {
     try {
       //issue #117 read properties first

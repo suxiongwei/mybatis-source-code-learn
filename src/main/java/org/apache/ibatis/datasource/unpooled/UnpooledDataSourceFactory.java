@@ -25,7 +25,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
 /**
- * learn
+ * 具体的工厂实现
  * 不用连接池的数据连接工厂
  * @author Clinton Begin
  */

@@ -29,13 +29,14 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * learn
  * @author Clinton Begin
  */
 public final class MappedStatement {
 
   /**
    * 节点的完整id属性，包括命名空间
+   * 命名空间 + mapper中方法的id
+   * 例如：<select id="selectByPrimaryKey" ...></select> id就是selectByPrimaryKey
    */
   private String resource;
   private Configuration configuration;
@@ -53,6 +54,9 @@ public final class MappedStatement {
    */
   private StatementType statementType;
   private ResultSetType resultSetType;
+  /**
+   * 对SQL语句的封装
+   */
   private SqlSource sqlSource;
   /**
    * 对应的二级缓存
@@ -63,6 +67,9 @@ public final class MappedStatement {
   private boolean flushCacheRequired;
   private boolean useCache;
   private boolean resultOrdered;
+  /**
+   * SQL语句的类型 包括：UNKNOWN, INSERT, UPDATE, DELETE, SELECT, FLUSH;
+   */
   private SqlCommandType sqlCommandType;
   private KeyGenerator keyGenerator;
   private String[] keyProperties;
@@ -75,7 +82,7 @@ public final class MappedStatement {
   private Log statementLog;
   private LanguageDriver lang;
   /**
-   * 多结果集时使用
+   * 多结果集时使用 存储过程会返回多个结果集 但是我们一般也不用
    */
   private String[] resultSets;
 

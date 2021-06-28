@@ -34,7 +34,6 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 
 /**
- * learn
  * 可复用的Executor
  * @author Clinton Begin
  */
@@ -89,6 +88,7 @@ public class ReuseExecutor extends BaseExecutor {
     String sql = boundSql.getSql();
     // 根据sql语句检查是否缓存可对应的Statement
     if (hasStatementFor(sql)) {
+      // 读取缓存中的Statement
       stmt = getStatement(sql);
       // 设置新的超时时间
       applyTransactionTimeout(stmt);

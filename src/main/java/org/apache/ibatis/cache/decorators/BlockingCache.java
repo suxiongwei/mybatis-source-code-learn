@@ -30,8 +30,8 @@ import org.apache.ibatis.cache.CacheException;
  * Simple and inefficient version of EhCache's BlockingCache decorator.
  * It sets a lock over a cache key when the element is not found in cache.
  * This way, other threads will wait until this element is filled instead of hitting the database.
- * learn
  * 阻塞版本的缓存装饰器，保证只有一个线程到数据库去查找指定key对应的数据
+ * 使用了装饰器模式
  * @author Eduardo Macarron
  *
  */
@@ -76,7 +76,9 @@ public class BlockingCache implements Cache {
 
   @Override
   public Object getObject(Object key) {
-    // 先获取锁，，获取成功加锁，获取失败阻塞一段时间重试
+    // 先获取锁，获取成功加锁，获取失败阻塞一段时间重试
+    // 这样做的目的是防止多个线程一下子都怼到数据库，造成数据库的不可用，
+    // 加了锁之后，如果缓存不存在，第一个限额线程先去数据库查询将值写到缓存，之后的线程直接从缓存取值
     acquireLock(key);
     Object value = delegate.getObject(key);
     // 获取数据成功，释放锁

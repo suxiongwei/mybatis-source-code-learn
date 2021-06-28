@@ -27,7 +27,6 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.SqlSession;
 
 /**
- * learn
  * 实现了InvocationHandler接口，增强mapper接口的实现，运用了代理模式
  * @author Clinton Begin
  * @author Eduardo Macarron
@@ -55,6 +54,14 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     this.methodCache = methodCache;
   }
 
+  /**
+   * trace-查询过程
+   * @param proxy
+   * @param method
+   * @param args
+   * @return
+   * @throws Throwable
+   */
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
@@ -68,6 +75,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
       throw ExceptionUtil.unwrapThrowable(t);
     }
     // 从缓存中读取mapperMethod对象，没有则添加
+    // mapperMethod 是个桥梁 连接MapperProxy 连接了SqlCommand
     final MapperMethod mapperMethod = cachedMapperMethod(method);
     // 执行sql
     return mapperMethod.execute(sqlSession, args);

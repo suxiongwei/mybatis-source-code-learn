@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * learn
  * 用于管理PooledConnection对象状态的组件
  * @author Clinton Begin
  */

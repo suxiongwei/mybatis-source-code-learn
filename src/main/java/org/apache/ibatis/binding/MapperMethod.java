@@ -36,7 +36,6 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * learn
  * 封装了mapper接口中对对应方法的信息，一级对应的sql语句信息，它是mapper接口和映射配置文件中sql语句的桥梁
  * @author Clinton Begin
  * @author Eduardo Macarron
@@ -58,6 +57,12 @@ public class MapperMethod {
     this.method = new MethodSignature(config, mapperInterface, method);
   }
 
+  /**
+   * trace-查询过程
+   * @param sqlSession
+   * @param args
+   * @return
+   */
   public Object execute(SqlSession sqlSession, Object[] args) {
     Object result;
     // 根据sql语句类型以及接口返回的参数调用不同的

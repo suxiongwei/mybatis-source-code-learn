@@ -26,7 +26,6 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.session.ResultHandler;
 
 /**
- * learn
  * StatementHandler完成MyBatis最核心的工作，也是Executor实现的基础；
  * 功能包括：创建statement对象、为sql语句绑定参数、执行增删改查等sql语句、将结果集进行转化
  * @author Clinton Begin

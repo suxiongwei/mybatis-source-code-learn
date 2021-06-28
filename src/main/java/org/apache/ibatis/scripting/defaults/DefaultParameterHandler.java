@@ -33,7 +33,6 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
- * learn
  * @author Clinton Begin
  * @author Eduardo Macarron
  */

@@ -23,7 +23,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.ibatis.session.SqlSession;
 
 /**
- * learn
  * 用于生成mapper接口动态代理的实例对象
  * @author Lasse Voss
  */
@@ -53,10 +52,16 @@ public class MapperProxyFactory<T> {
 
   @SuppressWarnings("unchecked")
   protected T newInstance(MapperProxy<T> mapperProxy) {
-    // 创建实现了mapper接口的动态代理对象
+    // 创建实现了mapper接口的动态代理对象 newProxyInstance最后一个参数就是要执行的InvocationHandler
     return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[] { mapperInterface }, mapperProxy);
   }
 
+  /**
+   * 工厂方法，创建实例
+   *
+   * @param sqlSession
+   * @return
+   */
   public T newInstance(SqlSession sqlSession) {
     // 每次创建都会创建新的MapperProxy对象
     final MapperProxy<T> mapperProxy = new MapperProxy<>(sqlSession, mapperInterface, methodCache);

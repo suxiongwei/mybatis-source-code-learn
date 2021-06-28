@@ -35,7 +35,6 @@ import java.util.concurrent.locks.ReadWriteLock;
  *  initialize();
  * }
  * </pre>
- * learn
  * @author Clinton Begin
  */
 

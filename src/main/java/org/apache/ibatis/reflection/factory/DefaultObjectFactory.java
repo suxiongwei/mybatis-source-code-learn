@@ -32,7 +32,6 @@ import org.apache.ibatis.reflection.ReflectionException;
 import org.apache.ibatis.reflection.Reflector;
 
 /**
- * learn
  * 默认对象工厂，所有对象都要由工厂来产生
  * @author Clinton Begin
  */
@@ -40,11 +39,25 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
 
   private static final long serialVersionUID = -8855120656740914948L;
 
+  /**
+   * 默认的构造方法
+   * @param type Object type
+   * @param <T>
+   * @return
+   */
   @Override
   public <T> T create(Class<T> type) {
     return create(type, null, null);
   }
 
+  /**
+   * 指定了构造器的类型和值
+   * @param type Object type
+   * @param constructorArgTypes Constructor argument types
+   * @param constructorArgs Constructor argument values
+   * @param <T>
+   * @return
+   */
   @SuppressWarnings("unchecked")
   @Override
   public <T> T create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
@@ -76,6 +89,7 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
           return constructor.newInstance();
         } catch (IllegalAccessException e) {
           if (Reflector.canControlMemberAccessible()) {
+            // 取消 Java 语言访问检查（public、private）
             constructor.setAccessible(true);
             return constructor.newInstance();
           } else {

@@ -30,7 +30,6 @@ import org.apache.ibatis.session.Configuration;
  * the value from).
  * <p>
  * Can also have additional parameters that are created by the dynamic language (for loops, bind...).
- * learn
  * 获取BoundSql对象，BoundSql是对动态sql解析生成之后的sql语句和参数映射信息的封装
  * @author Clinton Begin
  */

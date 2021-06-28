@@ -95,7 +95,6 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
- * learn
  * 配置
  * @author Clinton Begin
  */
@@ -672,6 +671,7 @@ public class Configuration {
 
   /**
    * Executor组件工厂方法
+   * 工厂模式的实现
    * @param transaction
    * @return
    */

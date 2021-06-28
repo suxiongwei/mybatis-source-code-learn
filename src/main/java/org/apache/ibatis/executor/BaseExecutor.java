@@ -45,7 +45,6 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
- * learn
  * 抽象类，实现类了Executor的大部分方法，主要提供了缓存管理和事务管理的能力，其它子类需要实现的方法为doUpdate、doQuery等（用到了模版模式）
  * @author Clinton Begin
  */
@@ -156,6 +155,18 @@ public abstract class BaseExecutor implements Executor {
     return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
  }
 
+  /**
+   * trace-查询过程
+   * @param ms
+   * @param parameter
+   * @param rowBounds
+   * @param resultHandler
+   * @param key
+   * @param boundSql
+   * @param <E>
+   * @return
+   * @throws SQLException
+   */
   @SuppressWarnings("unchecked")
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
@@ -213,41 +224,41 @@ public abstract class BaseExecutor implements Executor {
   }
 
   @Override
-  public CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql) {
-    if (closed) {
-      throw new ExecutorException("Executor was closed.");
-    }
-    CacheKey cacheKey = new CacheKey();
-    cacheKey.update(ms.getId());
-    cacheKey.update(rowBounds.getOffset());
-    cacheKey.update(rowBounds.getLimit());
-    cacheKey.update(boundSql.getSql());
-    List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
-    TypeHandlerRegistry typeHandlerRegistry = ms.getConfiguration().getTypeHandlerRegistry();
-    // mimic DefaultParameterHandler logic
-    for (ParameterMapping parameterMapping : parameterMappings) {
-      if (parameterMapping.getMode() != ParameterMode.OUT) {
-        Object value;
-        String propertyName = parameterMapping.getProperty();
-        if (boundSql.hasAdditionalParameter(propertyName)) {
-          value = boundSql.getAdditionalParameter(propertyName);
-        } else if (parameterObject == null) {
-          value = null;
-        } else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
-          value = parameterObject;
-        } else {
-          MetaObject metaObject = configuration.newMetaObject(parameterObject);
-          value = metaObject.getValue(propertyName);
-        }
-        cacheKey.update(value);
-      }
-    }
-    if (configuration.getEnvironment() != null) {
-      // issue #176
-      cacheKey.update(configuration.getEnvironment().getId());
-    }
-    return cacheKey;
+public CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql) {
+  if (closed) {
+    throw new ExecutorException("Executor was closed.");
   }
+  CacheKey cacheKey = new CacheKey();
+  cacheKey.update(ms.getId());
+  cacheKey.update(rowBounds.getOffset());
+  cacheKey.update(rowBounds.getLimit());
+  cacheKey.update(boundSql.getSql());
+  List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
+  TypeHandlerRegistry typeHandlerRegistry = ms.getConfiguration().getTypeHandlerRegistry();
+  // mimic DefaultParameterHandler logic
+  for (ParameterMapping parameterMapping : parameterMappings) {
+    if (parameterMapping.getMode() != ParameterMode.OUT) {
+      Object value;
+      String propertyName = parameterMapping.getProperty();
+      if (boundSql.hasAdditionalParameter(propertyName)) {
+        value = boundSql.getAdditionalParameter(propertyName);
+      } else if (parameterObject == null) {
+        value = null;
+      } else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
+        value = parameterObject;
+      } else {
+        MetaObject metaObject = configuration.newMetaObject(parameterObject);
+        value = metaObject.getValue(propertyName);
+      }
+      cacheKey.update(value);
+    }
+  }
+  if (configuration.getEnvironment() != null) {
+    // issue #176
+    cacheKey.update(configuration.getEnvironment().getId());
+  }
+  return cacheKey;
+}
 
   @Override
   public boolean isCached(MappedStatement ms, CacheKey key) {
@@ -350,6 +361,7 @@ public abstract class BaseExecutor implements Executor {
   }
 
   /**
+   * trace-查询过程
    * 真正访问数据库获取结果的方法
    * @param ms
    * @param parameter
@@ -388,6 +400,7 @@ public abstract class BaseExecutor implements Executor {
   protected Connection getConnection(Log statementLog) throws SQLException {
     Connection connection = transaction.getConnection();
     if (statementLog.isDebugEnabled()) {
+      // 获取了动态增强的ConnectionLogger类，来打印SQL等日志执行信息
       return ConnectionLogger.newInstance(connection, statementLog, queryStack);
     } else {
       return connection;

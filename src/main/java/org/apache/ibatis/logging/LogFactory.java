@@ -20,7 +20,6 @@ import java.lang.reflect.Constructor;
 /**
  * @author Clinton Begin
  * @author Eduardo Macarron
- * learn
  */
 public final class LogFactory {
 

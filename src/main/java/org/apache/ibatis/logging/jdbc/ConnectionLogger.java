@@ -27,6 +27,8 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
  * Connection proxy to add logging
+ * 实现了InvocationHandler接口，动态代理模式的体现
+ * 在调用
  *
  * @author Clinton Begin
  * @author Eduardo Macarron
@@ -34,6 +36,9 @@ import org.apache.ibatis.reflection.ExceptionUtil;
  */
 public final class ConnectionLogger extends BaseJdbcLogger implements InvocationHandler {
 
+  /**
+   * 被代理的类，让其有打印日志的能力
+   */
   private final Connection connection;
 
   private ConnectionLogger(Connection conn, Log statementLog, int queryStack) {
@@ -48,11 +53,12 @@ public final class ConnectionLogger extends BaseJdbcLogger implements Invocation
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, params);
       }
+      // 如果是调用prepareStatement、prepareCall、createStatement的方法，打印执行的语句
       if ("prepareStatement".equals(method.getName())) {
         if (isDebugEnabled()) {
           debug(" Preparing: " + removeBreakingWhitespace((String) params[0]), true);
         }
-        // learn：代理模式
+        // 代理模式
         PreparedStatement stmt = (PreparedStatement) method.invoke(connection, params);
         stmt = PreparedStatementLogger.newInstance(stmt, statementLog, queryStack);
         return stmt;

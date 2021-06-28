@@ -23,7 +23,6 @@ import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheException;
 
 /**
- * learn
  * Perpetual[持久的]
  * @author Clinton Begin
  */

@@ -63,7 +63,6 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * learn
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Iwao AVE!
@@ -175,9 +174,13 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     }
   }
 
-  //
-  // HANDLE RESULT SETS
-  //
+  /**
+   * trace-查询过程
+   * HANDLE RESULT SETS
+   * @param stmt
+   * @return
+   * @throws SQLException
+   */
   @Override
   public List<Object> handleResultSets(Statement stmt) throws SQLException {
     ErrorContext.instance().activity("handling results").object(mappedStatement.getId());

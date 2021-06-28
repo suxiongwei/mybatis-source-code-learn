@@ -22,7 +22,6 @@ import java.util.List;
 import org.apache.ibatis.reflection.ArrayUtil;
 
 /**
- * learn
  * 缓存key
  * 一般缓存框架的数据结构基本上都是 Key-Value 方式存储，
  * MyBatis 对于其 Key 的生成采取规则为：[mappedStementId + offset + limit + SQL + queryParams + environment]生成一个哈希码
@@ -72,6 +71,11 @@ public class CacheKey implements Cloneable, Serializable {
     return updateList.size();
   }
 
+  /**
+   * 更新缓存CacheKey
+   * 生成CacheKey是BaseExecutor的createCacheKey方法，
+   * @param object
+   */
   public void update(Object object) {
     int baseHashCode = object == null ? 1 : ArrayUtil.hashCode(object);
 

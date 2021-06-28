@@ -20,4 +20,5 @@ package org.apache.ibatis.session;
  */
 public enum ExecutorType {
   SIMPLE, REUSE, BATCH
+  // 即使指定了Executor类型为SIMPLE，但是底层的MappedStatement StatementType是PREPARED，你如果不对 StatementType 进行配置，那就是PREPARED
 }

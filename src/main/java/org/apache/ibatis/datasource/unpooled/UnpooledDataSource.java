@@ -32,7 +32,6 @@ import javax.sql.DataSource;
 import org.apache.ibatis.io.Resources;
 
 /**
- * learn
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
@@ -213,6 +212,12 @@ public class UnpooledDataSource implements DataSource {
     return doGetConnection(props);
   }
 
+  /**
+   * 从这可以看出 UnpooledDataSource 获取连接的方式和手动获取连接的方式是一致的
+   * @param properties
+   * @return
+   * @throws SQLException
+   */
   private Connection doGetConnection(Properties properties) throws SQLException {
     initializeDriver();
     Connection connection = DriverManager.getConnection(url, properties);

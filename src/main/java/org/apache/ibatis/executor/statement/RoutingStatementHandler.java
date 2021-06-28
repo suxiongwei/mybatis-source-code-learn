@@ -30,7 +30,6 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 /**
- * learn
  * Executor组件真正实例化的子类，使用<strong>静态代理模式</strong>，根据上下文决定生成哪一个具体实现类
  * @author Clinton Begin
  */
@@ -63,6 +62,13 @@ public class RoutingStatementHandler implements StatementHandler {
 
   }
 
+  /**
+   * trace-查询过程
+   * @param connection
+   * @param transactionTimeout
+   * @return
+   * @throws SQLException
+   */
   @Override
   public Statement prepare(Connection connection, Integer transactionTimeout) throws SQLException {
     return delegate.prepare(connection, transactionTimeout);
@@ -83,6 +89,14 @@ public class RoutingStatementHandler implements StatementHandler {
     return delegate.update(statement);
   }
 
+  /**
+   * trace-查询过程
+   * @param statement
+   * @param resultHandler
+   * @param <E>
+   * @return
+   * @throws SQLException
+   */
   @Override
   public <E> List<E> query(Statement statement, ResultHandler resultHandler) throws SQLException {
     return delegate.<E>query(statement, resultHandler);

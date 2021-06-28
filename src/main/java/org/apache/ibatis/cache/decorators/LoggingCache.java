@@ -22,11 +22,15 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 /**
+ * 用到了装饰器模式
  * @author Clinton Begin
  */
 public class LoggingCache implements Cache {
 
   private final Log log;
+  /**
+   * 被装饰的对象
+   */
   private final Cache delegate;
   protected int requests = 0;
   protected int hits = 0;

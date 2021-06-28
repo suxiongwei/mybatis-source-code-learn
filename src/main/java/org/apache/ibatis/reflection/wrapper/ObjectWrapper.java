@@ -22,7 +22,6 @@ import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
- * learn
  * 对象包装器
  * @author Clinton Begin
  */
@@ -30,6 +29,11 @@ public interface ObjectWrapper {
 
   Object get(PropertyTokenizer prop);
 
+  /**
+   * 设置对象指定属性的值
+   * @param prop
+   * @param value
+   */
   void set(PropertyTokenizer prop, Object value);
 
   String findProperty(String name, boolean useCamelCaseMapping);

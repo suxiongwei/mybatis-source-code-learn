@@ -34,7 +34,6 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
- * learn
  * BaseStatementHandler是一个抽象类，封装了通用的处理逻辑及方法执行流程，具体方法的实现由子类完成，这里使用到了设计模式中的模板方法模式
  * @author Clinton Begin
  */
@@ -101,6 +100,7 @@ public abstract class BaseStatementHandler implements StatementHandler {
   }
 
   /**
+   * trace-查询过程
    * 使用了模版模式，定义了获取Statement的步骤，其子类实现实例化statement的具体的方式
    * @param connection
    * @param transactionTimeout
@@ -112,7 +112,8 @@ public abstract class BaseStatementHandler implements StatementHandler {
     ErrorContext.instance().sql(boundSql.getSql());
     Statement statement = null;
     try {
-      // 通过不同的子类实例化不同的statement，分别有：simple、prepare、callable，模板模式
+      // 通过不同的子类实例化不同的statement，分别有：simple、prepare、callable，模板模式，这一步交给子类去自己实现，
+      // 而下面的setStatementTimeout、setFetchSize自己已经实现了，也就是通过模版方法的模式定义了一个算法的骨架
       statement = instantiateStatement(connection);
       // 设置超时时间
       setStatementTimeout(statement, transactionTimeout);
@@ -128,6 +129,12 @@ public abstract class BaseStatementHandler implements StatementHandler {
     }
   }
 
+  /**
+   * 默认使用的是PreparedStatementHandler
+   * @param connection
+   * @return
+   * @throws SQLException
+   */
   protected abstract Statement instantiateStatement(Connection connection) throws SQLException;
 
   protected void setStatementTimeout(Statement stmt, Integer transactionTimeout) throws SQLException {

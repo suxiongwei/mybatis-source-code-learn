@@ -24,7 +24,6 @@ import java.sql.SQLException;
 import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
- * learn
  * 使用动态代理封装了真正的数据库连接对象
  * @author Clinton Begin
  */

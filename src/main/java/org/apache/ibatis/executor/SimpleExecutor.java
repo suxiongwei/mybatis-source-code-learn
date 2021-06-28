@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * learn
  * @author Clinton Begin
  */
 public class SimpleExecutor extends BaseExecutor {
@@ -54,6 +53,17 @@ public class SimpleExecutor extends BaseExecutor {
     }
   }
 
+  /**
+   * trace-查询过程
+   * @param ms
+   * @param parameter
+   * @param rowBounds
+   * @param resultHandler
+   * @param boundSql
+   * @param <E>
+   * @return
+   * @throws SQLException
+   */
   @Override
   public <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
     Statement stmt = null;
@@ -84,6 +94,7 @@ public class SimpleExecutor extends BaseExecutor {
   }
 
   /**
+   * trace-查询过程
    * 创建JDBC中的Statement对象，然后为Statement对象设置参数操作
    * @param handler
    * @param statementLog

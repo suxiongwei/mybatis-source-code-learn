@@ -29,7 +29,6 @@ import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * learn
  * @author Eduardo Macarron
  */
 public class XMLLanguageDriver implements LanguageDriver {
